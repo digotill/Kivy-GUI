@@ -1,10 +1,48 @@
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, NumericProperty
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
+from kivy.uix.button import Button
 from database import DataBase
+
+# Constants
+POPUP_SIZE = (400, 400)
+
+
+class BaseLabel(Label):
+    font_size_ratio = NumericProperty(17)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.bind(width=self.update_font_size, height=self.update_font_size)
+
+    def update_font_size(self, *args):
+        self.font_size = (self.width ** 2 + self.height ** 2) / self.font_size_ratio ** 4
+
+
+class BaseTextInput(TextInput):
+          font_size_ratio = NumericProperty(17)
+
+          def __init__(self, **kwargs):
+                    super().__init__(**kwargs)
+                    self.bind(width=self.update_font_size, height=self.update_font_size)
+
+          def update_font_size(self, *args):
+                    self.font_size = (self.width ** 2 + self.height ** 2) / self.font_size_ratio ** 4
+
+
+class BaseButton(Button):
+          font_size_ratio = NumericProperty(17)
+
+          def __init__(self, **kwargs):
+                    super().__init__(**kwargs)
+                    self.bind(width=self.update_font_size, height=self.update_font_size)
+
+          def update_font_size(self, *args):
+                    self.font_size = (self.width ** 2 + self.height ** 2) / self.font_size_ratio ** 4
 
 
 class CreateAccountWindow(Screen):
@@ -13,17 +51,15 @@ class CreateAccountWindow(Screen):
           password = ObjectProperty(None)
 
           def submit(self):
-                    if self.namee.text != "" and self.email.text != "" and self.email.text.count("@") == 1 and self.email.text.count(".") > 0:
-                              if self.password != "":
+                    if self._validate_input():
+                              try:
                                         db.add_user(self.email.text, self.password.text, self.namee.text)
-
                                         self.reset()
-
                                         sm.current = "login"
-                              else:
-                                        invalidForm()
+                              except Exception as e:
+                                        self._show_error(f"An error occurred: {str(e)}")
                     else:
-                              invalidForm()
+                              self._show_error("Invalid form data")
 
           def login(self):
                     self.reset()
@@ -33,6 +69,22 @@ class CreateAccountWindow(Screen):
                     self.email.text = ""
                     self.password.text = ""
                     self.namee.text = ""
+
+          def _validate_input(self) -> bool:
+                    return (self.namee.text and self.email.text
+                            and self.email.text.count("@") == 1
+                            and self.email.text.count(".") > 0
+                            and self.password.text)
+
+          def _show_error(self, message: str):
+                    show_popup("Error", message)
+
+
+def show_popup(title: str, content: str):
+          popup = Popup(title=title,
+                        content=BaseLabel(text=content),
+                        size_hint=(None, None), size=POPUP_SIZE)
+          popup.open()
 
 
 class LoginWindow(Screen):
