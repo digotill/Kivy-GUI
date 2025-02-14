@@ -13,36 +13,36 @@ POPUP_SIZE = (400, 400)
 
 
 class BaseLabel(Label):
-    font_size_ratio = NumericProperty(17)
+    font_size_ratio = NumericProperty(30)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.bind(width=self.update_font_size, height=self.update_font_size)
 
     def update_font_size(self, *args):
-        self.font_size = (self.width ** 2 + self.height ** 2) / self.font_size_ratio ** 4
+        self.font_size = min(self.width, self.height) / self.font_size_ratio * 10
 
 
 class BaseTextInput(TextInput):
-          font_size_ratio = NumericProperty(17)
+    font_size_ratio = NumericProperty(30)
 
-          def __init__(self, **kwargs):
-                    super().__init__(**kwargs)
-                    self.bind(width=self.update_font_size, height=self.update_font_size)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.bind(width=self.update_font_size, height=self.update_font_size)
 
-          def update_font_size(self, *args):
-                    self.font_size = (self.width ** 2 + self.height ** 2) / self.font_size_ratio ** 4
+    def update_font_size(self, *args):
+        self.font_size = min(self.width, self.height) / self.font_size_ratio * 10
 
 
 class BaseButton(Button):
-          font_size_ratio = NumericProperty(17)
+    font_size_ratio = NumericProperty(30)
 
-          def __init__(self, **kwargs):
-                    super().__init__(**kwargs)
-                    self.bind(width=self.update_font_size, height=self.update_font_size)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.bind(width=self.update_font_size, height=self.update_font_size)
 
-          def update_font_size(self, *args):
-                    self.font_size = (self.width ** 2 + self.height ** 2) / self.font_size_ratio ** 4
+    def update_font_size(self, *args):
+        self.font_size = min(self.width, self.height) / self.font_size_ratio * 10
 
 
 class CreateAccountWindow(Screen):
